@@ -12,7 +12,7 @@
   <li><a href=https://www.linkedin.com/in/marcosvinis/>Marcos Vinícius da Silva</a></li>
 </ul>
 
-<h3>Professor:</h3> 
+<h3>Professores:</h3> 
 <ul>
   <li><a href=https://www.linkedin.com/in/caiorodrigs/>Caio Fernando Rodrigues dos Santos</a></li>
   <li><a href=https://www.linkedin.com/in/paulo-akira-enabe-732973172/>Paulo Akira Figuti Enabe</a></li>
