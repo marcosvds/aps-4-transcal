@@ -8,7 +8,6 @@ lista_params = [nn,N,nm,Inc,nc,F,nr,R]
 def calcula_sen_cos(no1,no2):
     no1 = int(no1)
     no2 = int(no2)
-    # print(N)
     L = math.sqrt((N[0][no2-1] -  N[0][no1-1])**2 + (N[1][no2-1] -  N[1][no1-1])**2)
     cos = (N[0][no2-1] -  N[0][no1-1])/L
     sen = (N[1][no2-1] -  N[1][no1-1])/L
@@ -18,7 +17,6 @@ def calcula_sen_cos(no1,no2):
 def calcula_K_local(Inc):
     E = Inc[0][2]
     A = Inc[0][3]
-    i = 0
     array_K =[]
     for array_nos in (Inc):
         K = np.zeros((4,4))
@@ -42,8 +40,7 @@ def calcula_K_local(Inc):
         K[3][3] = s*s
         K = (E*A/l)*K
         array_K.append(K)       
-    print(array_K)
-    return 0
+    return array_K
 
 print(calcula_K_local(Inc))
 
