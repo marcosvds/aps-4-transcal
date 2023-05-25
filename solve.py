@@ -19,7 +19,6 @@ def gauss_seidel(ite, tol, K, F):
         for i in range(n):
             if x1[i] != 0 and x[i] != 0:
                 norma = abs(x1[i] - x[i])/abs(x1[i])
-                print(x1[i], x[i])
         if (norma < tol and k > 0):
             return x1
         for i in range(n):
@@ -94,6 +93,9 @@ def solve_trelica(num_nos, matriz_nos, num_elementos, matriz_incid, num_c, vetor
         deformacoes.append(np.dot(K,d_tot[gdls])/l)
         tensoes.append(E*deformacoes[-1])
         forcas_internas.append(A*tensoes[-1])
-
-    return reacoes[vetor_restricoes_novo], d_tot, deformacoes, forcas_internas, tensoes
+    deformacoes = np.array(deformacoes)
+    tensoes = np.array(tensoes)
+    forcas_internas = np.array(forcas_internas)
+        
+    return reacoes[vetor_restricoes_novo].reshape(-1,1), d_tot.reshape(-1,1), deformacoes.reshape(-1,1), forcas_internas.reshape(-1,1), tensoes.reshape(-1,1)
 solve_trelica(nn, N, nm, Inc, nc, F, nr, R)
