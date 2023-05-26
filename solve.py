@@ -14,7 +14,7 @@ F: numpy.ndarray - Vetor de cargas (nc x 2)
 nr: int - Número de restrições
 R: numpy.ndarray - Vetor de restrições (nr x 2)
 """
-[nn, N, nm, Inc, nc, F, nr, R] = importa('entrada.xls')
+[nn, N, nm, Inc, nc, F, nr, R] = importa('entrada_2.xls')
 
 def gauss_seidel(ite, tol, K, F):
     """
@@ -50,6 +50,26 @@ def gauss_seidel(ite, tol, K, F):
 
     return x1
 
+def jacobi(ite, tol, K, F):
+    n = len(F)
+    x = np.zeros(n)
+    x1 = np.zeros(n)
+    for k in range(ite):
+        for i in range(n):
+            x1[i] = F[i]
+            for j in range(n):
+                if (j != i):
+                    x1[i] = x1[i] - K[i][j] * x[j]
+            x1[i] = x1[i] / K[i][i]
+        norma = 0
+        for i in range(n):
+            if x1[i] != 0 and x[i] != 0:
+                norma = abs(x1[i] - x[i])/abs(x1[i])
+        if (norma < tol):
+            return x1
+        for i in range(n):
+            x[i] = x1[i]
+    return x1
 
 def calcula_sen_cos(no1, no2, matriz_nos):
     """
@@ -73,8 +93,7 @@ def solve_trelica(num_nos, matriz_nos, num_elementos, matriz_incid, num_c, vetor
 
     matriz_global = np.zeros((num_nos * 2, num_nos * 2))
     gdl = {}
-    E = matriz_incid[0][2]
-    A = matriz_incid[0][3]
+    
 
     # Mapear graus de liberdade de cada nó
     for i in range(1, num_nos + 1):
@@ -85,7 +104,8 @@ def solve_trelica(num_nos, matriz_nos, num_elementos, matriz_incid, num_c, vetor
         K = np.zeros((4, 4))
         s, c, l = calcula_sen_cos(array_nos[0], array_nos[1], matriz_nos)
         gdls = gdl[array_nos[0]] + gdl[array_nos[1]]
-
+        E = array_nos[2]
+        A = array_nos[3]
         # Montar a matriz de rigidez local
         K[0][0] = c ** 2
         K[0][1] = c * s
@@ -164,4 +184,34 @@ def solve_trelica(num_nos, matriz_nos, num_elementos, matriz_incid, num_c, vetor
     )
 
 # Chamar a função solve_trelica com os argumentos apropriados
-solve_trelica(nn, N, nm, Inc, nc, F, nr, R)
+reacoes, deslocamento, deformacoes, forcas_internas, tensoes = solve_trelica(nn, N, nm, Inc, nc, F, nr, R)
+
+def plota(N,Inc, reacoes, deslocamento, deformacoes, forcas_internas, tensoes):
+    # Numero de membros
+    nm = len(Inc[:,0])
+    import matplotlib as mpl
+    import matplotlib.pyplot as plt
+
+#    plt.show()
+    fig = plt.figure()
+    N_deslocado = N + deslocamento.reshape(2,-1)
+    # Passa por todos os membros
+    for i in range(nm):
+        print(i)
+        # encontra no inicial [n1] e final [n2] 
+        n1 = int(Inc[i,0])
+        n2 = int(Inc[i,1])        
+        if i == 0:
+            plt.plot([N[0,n1-1],N[0,n2-1]],[N[1,n1-1],N[1,n2-1]],color='r',linewidth=3, label='Original')
+            plt.plot([N_deslocado[0,n1-1],N_deslocado[0,n2-1]],[N_deslocado[1,n1-1],N_deslocado[1,n2-1]],color='b',linewidth=3, linestyle='--', label='Deformado')
+        else:
+            plt.plot([N[0,n1-1],N[0,n2-1]],[N[1,n1-1],N[1,n2-1]],color='r',linewidth=3)
+            plt.plot([N_deslocado[0,n1-1],N_deslocado[0,n2-1]],[N_deslocado[1,n1-1],N_deslocado[1,n2-1]],color='b',linewidth=3, linestyle='--')
+    plt.legend()
+    plt.xlabel('x [m]')
+    plt.ylabel('y [m]')
+    plt.grid(True)
+    plt.axis('equal')
+    plt.show()
+
+plota(N,Inc, reacoes, deslocamento, deformacoes, forcas_internas, tensoes)
